@@ -14,6 +14,6 @@ metadata:
   name: provider-aws
 spec:
   package: crossplane/provider-aws:v0.32.0
-controllerConfigRef:
-  name: default
+  controllerConfigRef:
+    name: default
 
