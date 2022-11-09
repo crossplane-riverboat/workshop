@@ -1,0 +1,12 @@
+apiVersion: efs.aws.crossplane.io/v1alpha1
+kind: FileSystem
+metadata:
+  name: efs
+spec:
+  forProvider:
+    region: eu-west-2
+    tags:
+      - key: managed_by
+        value: crossplane
+  providerConfigRef:
+    name: 'default'

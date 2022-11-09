@@ -1,0 +1,41 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xcomputeinstances.example.com
+spec:
+  group: example.com
+  names:
+    kind: xcomputeinstance
+    plural: xcomputeinstances
+  claimNames:
+    kind: computeinstance
+    plural: computeinstances
+  versions:
+  - name: v1alpha1
+    served: true
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              parameters:
+                type: object
+                properties:
+                  zone:
+                    type: string
+                  ami:
+                    type: string
+                  instanceType:
+                    type: string
+                  efsName:
+                    type: string
+                required:
+                - zone
+                - ami
+                - instanceType
+                - efsName
+            required:
+            - parameters

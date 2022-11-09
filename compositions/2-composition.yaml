@@ -1,0 +1,65 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: computeinstance
+  labels:
+    crossplane.io/xrd: xcomputeinstances.example.com
+spec:
+  writeConnectionSecretsToNamespace: crossplane-system
+  compositeTypeRef:
+    apiVersion: example.com/v1alpha1
+    kind: xcomputeinstance
+  resources:
+  - name: compute
+    base:
+      apiVersion: ec2.aws.crossplane.io/v1alpha1
+      kind: Instance
+      spec:
+        forProvider:
+          tags:
+            - key: managed_by
+              value: crossplane
+        providerConfigRef:
+          name: 'default'
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: spec.forProvider.name
+
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.zone
+      toFieldPath: spec.forProvider.region
+
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.ami
+      toFieldPath: spec.forProvider.imageId
+
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.instanceType
+      toFieldPath: spec.forProvider.instanceType
+      transforms:
+        - type: map
+          map:
+            small: t3.micro
+            medium: m5.large
+            big: x.test
+
+  - name: efs
+    base:
+      apiVersion: efs.aws.crossplane.io/v1alpha1
+      kind: FileSystem
+      spec:
+        forProvider:
+          tags:
+            - key: managed_by
+              value: crossplane
+        providerConfigRef:
+          name: 'default'
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.zone
+      toFieldPath: spec.forProvider.region
+
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.efsName
+      toFieldPath: spec.metadata.name

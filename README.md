@@ -162,7 +162,7 @@ providerconfig.aws.crossplane.io/default created
 ### Provision something
 
 ```
-# k apply -f vpc.yaml
+# k apply -f examples/vpc.yaml
 vpc.ec2.aws.crossplane.io/production-vpc created
 #
 # k get vpc
@@ -204,8 +204,49 @@ vpc.ec2.aws.crossplane.io/production-vpc   True    True     vpc-0ea808fe13c599c0
 
 ### Provision something else
 
+
+```
+k apply -f examples/instance.yaml
+```
+
+```
+k apply -f examples/efs.yaml
+```
+
+Upstream provider documentation:
+
 https://doc.crds.dev/github.com/crossplane/provider-aws@v0.32.0
 
+### Create a composition
+
+```
+# k apply -f compositions/1-xrd.yaml 
+compositeresourcedefinition.apiextensions.crossplane.io/xcomputeinstances.example.com created
+# k apply -f compositions/2-composition.yaml 
+composition.apiextensions.crossplane.io/computeinstance created
+# k apply -f compositions/3-xr.yaml 
+computeinstance.example.com/test1 created
+# 
+```
+
+Check status
+
+```
+# k get computeinstance.example.com/test1
+NAME    SYNCED   READY   CONNECTION-SECRET   AGE
+test1   True     False                       42s
+# k get instance.ec2.aws.crossplane.io
+NAME                READY   SYNCED   ID                    STATE     AGE
+test1-cfjhd-x42vj   True    True     i-0bf72a9e83cdcae92   running   71s
+# k get filesystem.efs.aws.crossplane.io
+NAME                READY   SYNCED   EXTERNAL-NAME
+test1-cfjhd-k242v   True    True     fs-0b13b780db4ac71d2
+# 
+# k get computeinstance.example.com/test1
+NAME    SYNCED   READY   CONNECTION-SECRET   AGE
+test1   True     True                        119s
+# 
+```
 
 ### Clean up
 

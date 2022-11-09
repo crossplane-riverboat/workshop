@@ -1,0 +1,14 @@
+apiVersion: ec2.aws.crossplane.io/v1alpha1
+kind: Instance
+metadata:
+  name: example-instance
+spec:
+  forProvider:
+    region: eu-west-2
+    imageId: ami-f976839e
+    instanceType: t3.small
+    tags:
+      - key: managed_by
+        value: crossplane
+  providerConfigRef:
+    name: 'default'

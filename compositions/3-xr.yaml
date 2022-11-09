@@ -1,0 +1,13 @@
+apiVersion: example.com/v1alpha1
+kind: computeinstance
+metadata:
+  namespace: crossplane-system
+  name: test1
+spec:
+  parameters:
+    zone: eu-west-2
+    ami: ami-f976839e
+    instanceType: small
+    efsName: pg
+#  writeConnectionSecretToRef:
+#    name: my-instance-connection-details
